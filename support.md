@@ -23,10 +23,11 @@ tokens or provider credentials.
    `npm install -g tokenscope-companion@0.2.5` (preferred for a persistent
    publisher and for `setup-claude`).
 2. Complete the official ChatGPT sign-in in your browser.
-3. Start a publisher, for example:
-   `tokenscope-companion start --mode sites`
-   (or `--mode ntfy`, `--mode direct`, `--mode cloudflare`, `--mode localhost`,
-   `--mode tailscale --endpoint https://…`).
+3. Start a publisher. Sites mode needs a relay you deploy yourself:
+   `tokenscope-companion start --mode sites --endpoint https://YOUR_RELAY`
+   (alternatives: `--mode ntfy`, `--mode direct`, `--mode cloudflare`,
+   `--mode localhost`, `--mode tailscale --endpoint https://…`). TokenScope
+   does not provide a relay.
 4. In TokenScope, open **Settings → Connections** and scan the private
    `pairing.svg` the companion saved (or paste `pairing-url.txt`).
 5. Confirm the computer name and publisher fingerprint, then wait for the first
@@ -45,7 +46,7 @@ subscription plan is shown.
 3. Send one normal message in Claude Code. The status line writes a normalized
    reading; no transcript is saved.
 4. Start the separate Claude publisher:
-   `tokenscope-companion start --provider claude --mode sites`
+   `tokenscope-companion start --provider claude --mode sites --endpoint https://YOUR_RELAY`
 5. Pair its QR in TokenScope. Codex and Claude can run side by side.
 
 Claude readings update only when Claude Code itself supplies allowance fields.
@@ -67,12 +68,12 @@ quotas.
 
 ## Connections and privacy
 
-- Pairing keys stay on your devices. Hosted envelopes are encrypted; the relay
-  cannot read percentages.
+- Pairing keys stay on your devices. Envelopes are encrypted; even a relay you
+  host cannot read percentages.
 - Remove a connection in **Settings → Connections** to delete its local keys and
   cache on that device.
 - On the computer, `tokenscope-companion revoke --endpoint <relay>` deletes the
-  hosted channel and its device registrations.
+  channel and its device registrations from that relay.
 - Stopping and deleting the companion's private directory rotates its keys.
   Do this only when you intend to re-pair every device.
 - A pairing QR or URL is as sensitive as a password. Never post it in a support

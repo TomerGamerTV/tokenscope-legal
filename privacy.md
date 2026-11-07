@@ -8,9 +8,9 @@ subscriptions. It does not sign in to those services, does not read your
 messages or transcripts, and never receives your provider password, OAuth
 token, session cookie or API key.
 
-> Operator and contact details are below. The optional Sites relay is operated
-> by the project on OpenAI Sites; direct/LAN, Tailscale, Cloudflare, localhost.run
-> and ntfy modes do not involve a project-hosted service.
+> Operator and contact details are below. TokenScope does not host readings or a
+> relay; Sites mode points at a relay you deploy. Direct/LAN, Tailscale,
+> Cloudflare, localhost.run and ntfy are user/third-party hosted.
 
 ## 1. Who is responsible
 
@@ -25,15 +25,15 @@ companion is distributed separately and runs on a computer that you control.
 
 - Usage readings are produced on your own computer by the companion, from the
   official OpenAI Codex client or Claude Code's documented status-line output.
-- Readings are encrypted on the computer before they leave it only if you
-  choose a hosted connection method. With a direct/LAN connection they stay on
-  your network.
-- The optional hosted relay stores encrypted envelopes, routing identifiers and
-  push registration metadata. It does not hold the content key and cannot read
-  allowance percentages.
+- Readings are encrypted on the computer before they leave it whenever you use
+  a network connection method. With a direct/LAN connection they stay on your
+  network.
+- TokenScope does not operate a relay or a reading store. If you use Sites mode,
+  you deploy and control the relay yourself; your host stores only encrypted
+  envelopes and metadata and cannot read allowance percentages.
 - No analytics, advertising, tracking, fingerprinting or sale of personal data.
 - Everything the app stores on your device can be removed by removing the
-  account/connection; hosted channels can be revoked from the companion.
+  account/connection; your own relay data is removed on that deployment.
 
 ## 3. Data handled on your device
 
@@ -79,17 +79,20 @@ Connection methods you can choose:
 | Cloudflare Quick Tunnel | Encrypted envelopes through a temporary public URL | Cloudflare |
 | localhost.run | Encrypted envelopes through a temporary public URL | localhost.run |
 | ntfy | Encrypted envelopes posted to an ntfy topic | ntfy.sh and its network |
-| Sites relay | Encrypted envelopes uploaded to our relay | Our hosting provider and us (metadata only) |
+| Sites relay (self-hosted) | Encrypted envelopes uploaded to the relay you deploy | You and your hosting provider |
 
 Tunnel and ntfy providers are third parties with their own terms and retention.
 Choose a method that matches your threat model. Route secrecy is not
 authentication; envelope encryption and publisher verification are.
 
-## 5. Hosted relay: what we store and why
+## 5. Self-hosted Sites relay
 
-If you use the Sites connection method (`--mode sites`), the companion uploads
-the encrypted envelope to the TokenScope relay hosted on OpenAI Sites
-(hosting region controlled by that provider). The relay stores:
+TokenScope does not provide or default to a relay. Sites mode (`--mode sites`)
+requires `--endpoint https://YOUR_RELAY` pointing at a relay you deploy from
+`Services/Relay` in the source, or another compatible server. That deployment is
+under your control; the project does not receive its data, keys or logs.
+
+A reference relay stores:
 
 - a random channel identifier derived from the publisher's public identity;
 - the latest encrypted envelope and a monotonic sequence number;
@@ -97,27 +100,30 @@ the encrypted envelope to the TokenScope relay hosted on OpenAI Sites
 - if you enable update hints, a device push token, its environment
   (sandbox/production), the chosen hint style and per-device send timestamps;
 - standard request metadata that any internet service receives (IP address,
-  user agent, time). Our hosting provider may keep short-lived operational logs.
+  user agent, time) in your host's logs.
 
-The relay does not receive the content key, the private signing key, provider
-credentials, prompts, responses, email addresses or names. We cannot decrypt
-your allowance readings. The relay serves only the latest packet; it is not a
-history service.
+It does not receive the content key, the private signing key, provider
+credentials, prompts, responses, email addresses or names, and cannot decrypt
+your allowance readings. It serves only the latest packet; it is not a history
+service.
 
-Retention: the latest envelope is kept while the channel is active. Channels
-with no activity for 30 days are deleted, together with their device
-registrations. Revoking a connection from the companion deletes the hosted
-channel and its devices. Deleting the app removes local keys and caches; it does
-not by itself delete a hosted channel that another device still uses.
+Retention is configured by you. The reference relay deletes channels after 30
+days of inactivity, and `revoke --endpoint` deletes a channel and its devices.
+Deleting the app removes local keys and caches; it does not delete a channel
+another device still uses. Delete that on your own relay.
+
+The project previously ran a test relay for beta builds. Current builds do not
+reference it; it is not part of the app and is scheduled for deletion.
 
 ## 6. Push notifications
 
-Update hints are optional and off unless you enable them. If enabled, Apple
-Push Notification service delivers them through our relay. Visible hints contain
-only a generic title and the text "New encrypted usage reading"; allowance
-numbers are decrypted on your device by the notification service extension. The
-relay stores the push token until you disable hints, revoke the connection or the
-channel expires.
+Update hints are optional and off unless you enable them. If you enable them,
+your relay sends them through Apple Push Notification service. Visible hints
+contain only a generic title and the text "New encrypted usage reading";
+allowance numbers are decrypted on your device by the notification service
+extension. Your relay stores the push token until you disable hints, revoke the
+connection or delete the channel. The project has no APNs credentials for this
+feature and cannot send you notifications.
 
 ## 7. iCloud (optional)
 
@@ -153,11 +159,11 @@ governs the purchase.
 ## 10. Legal bases (EEA/UK)
 
 Where the GDPR or UK GDPR applies, we rely on: performance of a contract or
-steps at your request (providing the app and relay); legitimate interests
-(keeping the service secure and operational, preventing abuse); consent (optional
-push hints, optional iCloud sync, optional support purchases); and legal
-obligations (tax and accounting for purchases). You can withdraw consent at any
-time by turning the feature off.
+steps at your request (providing the app); legitimate interests (keeping the app
+secure and operational); consent (optional push hints, optional iCloud sync,
+optional support purchases); and legal obligations (tax and accounting for
+purchases). You can withdraw consent at any time by turning the feature off. We
+do not operate a service that stores your readings.
 
 ## 11. Your choices and rights
 
@@ -165,8 +171,9 @@ time by turning the feature off.
   exposes the current summary locally.
 - **Delete local data:** remove an account or connection in Settings, or delete
   the app.
-- **Delete hosted data:** run `tokenscope-companion revoke --endpoint <relay>`
-  on the computer, or remove the connection and let the channel expire.
+- **Delete relay data:** on your own deployment, run
+  `tokenscope-companion revoke --endpoint <your relay>`, or remove the channel
+  from that service.
 - **Disable hints / iCloud:** turn the switch off in TokenScope settings.
 - **Refunds:** contact Apple; we cannot process App Store refunds.
 - **EEA/UK rights:** access, rectification, erasure, restriction, objection and
@@ -174,8 +181,8 @@ time by turning the feature off.
 - **California rights:** know, delete, correct and opt out of sale/sharing. We
   do not sell or share personal information as those terms are defined.
 
-We may need to verify that a request relates to you; because we hold almost no
-identifying data, we may ask for the channel identifier from the companion.
+We hold no readings, so a deletion request for relay data must be made on the
+deployment you control. We can help identify which settings are local.
 
 ## 12. Children
 
@@ -194,15 +201,15 @@ you no longer use.
 
 ## 14. International transfers
 
-Our relay is hosted by OpenAI Sites; Apple, tunnel and ntfy providers may
-process data in other countries. Where required, transfers rely on standard
-contractual clauses or the provider's equivalent safeguards. Because readings
-are end-to-end encrypted, transferred content remains unreadable to us.
+We do not transfer readings. Apple, your own relay host, tunnel and ntfy
+providers may process data in other countries under their own safeguards and
+policies. Because readings are end-to-end encrypted, transferred content remains
+unreadable to the relay and its host.
 
 ## 15. Third-party services
 
 - Apple: App Store, StoreKit, iCloud, APNs — https://www.apple.com/legal/privacy/
-- OpenAI Sites: relay hosting — https://openai.com/policies/privacy-policy/
+- Your relay host: only if you deploy one; governed by your provider's policy.
 - Optional: Cloudflare, localhost.run, Tailscale, ntfy.sh, each under its own
   policy and only when you select that method.
 - OpenAI Codex and Anthropic Claude Code: your use of those clients is governed

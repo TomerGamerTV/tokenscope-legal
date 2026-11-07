@@ -72,8 +72,9 @@ You must use your own accounts and devices. You may not:
 - represent TokenScope readings as official provider billing, invoices or
   guaranteed quota.
 
-We may suspend or revoke hosted relay access for abuse, security risk or legal
-requirements. Local features keep working without the relay.
+We do not operate a relay and cannot suspend your deployment. We may stop
+distributing the app or companion if these terms are breached or the law
+requires it; local features keep working.
 
 ## 6. Readings, accuracy and availability
 
@@ -141,7 +142,7 @@ misconduct.
 ## 12. Termination
 
 You may stop using TokenScope at any time and delete the app and companion
-data. We may terminate hosted relay access if you breach these terms. Sections
+data. We may stop distributing updates if you breach these terms. Sections
 governing licensing, disclaimers, liability, indemnity and governing law survive
 termination.
 
