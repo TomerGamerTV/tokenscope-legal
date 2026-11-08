@@ -26,8 +26,10 @@ tokens or provider credentials.
 3. Start a publisher. Sites mode needs a relay you deploy yourself:
    `tokenscope-companion start --mode sites --endpoint https://YOUR_RELAY`
    (alternatives: `--mode ntfy`, `--mode direct`, `--mode cloudflare`,
-   `--mode localhost`, `--mode tailscale --endpoint https://…`). TokenScope
-   does not provide a relay.
+   `--mode localhost`, `--mode tailscale --endpoint https://…`, or
+   `--mode external --endpoint https://YOUR_TUNNEL`). TokenScope does not
+   provide a relay or tunnel; external mode works with a tunnel you run, such
+   as OpenTunnel on macOS/Linux.
 4. In TokenScope, open **Settings → Connections** and scan the private
    `pairing.svg` the companion saved (or paste `pairing-url.txt`).
 5. Confirm the computer name and publisher fingerprint, then wait for the first
