@@ -81,8 +81,13 @@ Connection methods you can choose:
 | ntfy | Encrypted envelopes posted to an ntfy topic | ntfy.sh and its network |
 | Sites relay (self-hosted) | Encrypted envelopes uploaded to the relay you deploy | You and your hosting provider |
 | External tunnel (e.g. OpenTunnel) | Encrypted envelopes through a tunnel you run | Tunnel provider (IP/timing; not HTTP plaintext when TLS terminates locally) |
+| OpenTunnel (built in) | Encrypted envelopes through a managed route created by the companion | OpenTunnel (IP/timing, route name and device tunnel identity; not HTTP plaintext) |
 
 Tunnel and ntfy providers are third parties with their own terms and retention.
+The built-in OpenTunnel mode creates a tunnel identity and route for you; it does
+not create an account or send allowance values, reader credentials or provider
+keys to OpenTunnel, because TLS terminates on your computer. You can avoid the
+managed route by choosing direct/LAN, Tailscale or a tunnel you run.
 Choose a method that matches your threat model. Route secrecy is not
 authentication; envelope encryption and publisher verification are.
 
@@ -212,7 +217,8 @@ unreadable to the relay and its host.
 - Apple: App Store, StoreKit, iCloud, APNs — https://www.apple.com/legal/privacy/
 - Your relay host: only if you deploy one; governed by your provider's policy.
 - Optional: OpenTunnel, Cloudflare, localhost.run, Tailscale, ntfy.sh, each
-  under its own policy and only when you select that method.
+  under its own policy and only when you select that method. OpenTunnel is
+  operated by a third party, not by the TokenScope project.
 - OpenAI Codex and Anthropic Claude Code: your use of those clients is governed
   by their own terms. TokenScope is not affiliated with either company.
 

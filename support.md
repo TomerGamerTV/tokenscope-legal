@@ -23,13 +23,13 @@ tokens or provider credentials.
    `npm install -g tokenscope-companion@0.2.5` (preferred for a persistent
    publisher and for `setup-claude`).
 2. Complete the official ChatGPT sign-in in your browser.
-3. Start a publisher. Sites mode needs a relay you deploy yourself:
-   `tokenscope-companion start --mode sites --endpoint https://YOUR_RELAY`
-   (alternatives: `--mode ntfy`, `--mode direct`, `--mode cloudflare`,
+3. Start a publisher. The managed route needs no setup:
+   `tokenscope-companion start --mode opentunnel`
+   (or `--mode sites --endpoint https://YOUR_RELAY` for a relay you deploy;
+   alternatives: `--mode ntfy`, `--mode direct`, `--mode cloudflare`,
    `--mode localhost`, `--mode tailscale --endpoint https://…`, or
    `--mode external --endpoint https://YOUR_TUNNEL`). TokenScope does not
-   provide a relay or tunnel; external mode works with a tunnel you run, such
-   as OpenTunnel on macOS/Linux.
+   provide a relay; OpenTunnel is a third-party tunnel service.
 4. In TokenScope, open **Settings → Connections** and scan the private
    `pairing.svg` the companion saved (or paste `pairing-url.txt`).
 5. Confirm the computer name and publisher fingerprint, then wait for the first
@@ -48,7 +48,8 @@ subscription plan is shown.
 3. Send one normal message in Claude Code. The status line writes a normalized
    reading; no transcript is saved.
 4. Start the separate Claude publisher:
-   `tokenscope-companion start --provider claude --mode sites --endpoint https://YOUR_RELAY`
+   `tokenscope-companion start --provider claude --mode opentunnel`
+   (or `--mode sites --endpoint https://YOUR_RELAY` for your own relay)
 5. Pair its QR in TokenScope. Codex and Claude can run side by side.
 
 Claude readings update only when Claude Code itself supplies allowance fields.
@@ -71,7 +72,10 @@ quotas.
 ## Connections and privacy
 
 - Pairing keys stay on your devices. Envelopes are encrypted; even a relay you
-  host cannot read percentages.
+  host or the managed OpenTunnel route cannot read percentages.
+- OpenTunnel is operated by a third party. It sees connection metadata (IP
+  addresses, timing, route name) but not usage values; stop the companion and
+  remove its tunnel state if you do not want that mode.
 - Remove a connection in **Settings → Connections** to delete its local keys and
   cache on that device.
 - On the computer, `tokenscope-companion revoke --endpoint <relay>` deletes the
