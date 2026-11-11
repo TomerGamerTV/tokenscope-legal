@@ -19,8 +19,8 @@ tokens or provider credentials.
 ## Set up Codex readings
 
 1. Install Node 22 or later. Then either run
-   `npx tokenscope-companion@0.2.6 login` or install it once with
-   `npm install -g tokenscope-companion@0.2.6` (preferred for a persistent
+   `npx tokenscope-companion@0.2.7 login` or install it once with
+   `npm install -g tokenscope-companion@0.2.7` (preferred for a persistent
    publisher and for `setup-claude`).
 2. Complete the official ChatGPT sign-in in your browser.
 3. Start a publisher. The managed route needs no setup:
@@ -69,6 +69,25 @@ quotas.
 - Fix: start the companion, confirm it prints an encrypted snapshot, then pull
   to refresh in TokenScope.
 
+## Run the companion in the background
+
+- Install it once, then register a background publisher:
+  `npm install -g tokenscope-companion@0.2.7`, then
+  `tokenscope-companion service install --provider claude --mode opentunnel`.
+- `tokenscope-companion service status` reports whether it is running;
+  `tokenscope-companion service uninstall` stops and removes it.
+- On macOS it is a launchd agent, on Linux a systemd user unit, and on Windows a
+  per-user Scheduled Task that starts hidden. All three start **after you sign
+  in**; none is an elevated system service or runs before sign-in.
+- Only one background publisher is supported. Stop a manual `start` before
+  installing, because both use the same `publisher.lock`.
+- `service install` requires a global install; it refuses to run from the
+  disposable `npx` cache. Add `--interval 1800` to publish every 30 minutes.
+- Logs are written to `service.log` in the private directory. They contain
+  status lines and paths, never keys or the pairing URL.
+- Reinstall the service after upgrading or changing Node, because the agent
+  records an absolute Node path.
+
 ## Companion says "Publisher lock"
 
 - The lock stops two publishers from writing to the same private directory. The
@@ -77,7 +96,7 @@ quotas.
   `Get-Process -Id <pid>` in PowerShell shows whether it is still running.
 - Companion 0.2.6 and later remove a lock automatically when its owner has
   exited, including an empty lock left by a crash. On an older version, update
-  first (`npx tokenscope-companion@0.2.6 …`); delete `publisher.lock` manually
+  first (`npx tokenscope-companion@0.2.7 …`); delete `publisher.lock` manually
   only after confirming the reported process is gone.
 - Default directories: `~/.tokenscope` for Codex and `~/.tokenscope-claude` for
   Claude (`%USERPROFILE%\.tokenscope` and `%USERPROFILE%\.tokenscope-claude` on
