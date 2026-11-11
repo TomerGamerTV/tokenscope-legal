@@ -83,8 +83,7 @@ quotas.
   installing, because both use the same `publisher.lock`.
 - `service install` requires a global install; it refuses to run from the
   disposable `npx` cache. Add `--interval 1800` to publish every 30 minutes.
-- Logs are written to `service.log` in the private directory. They contain
-  status lines and paths, never keys or the pairing URL.
+- Logs are written to `service.log` in the private directory (`0600` on macOS/Linux). They contain status lines and paths, never keys or the pairing URL.
 - Reinstall the service after upgrading or changing Node, because the agent
   records an absolute Node path.
 
