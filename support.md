@@ -19,8 +19,8 @@ tokens or provider credentials.
 ## Set up Codex readings
 
 1. Install Node 22 or later. Then either run
-   `npx tokenscope-companion@0.2.5 login` or install it once with
-   `npm install -g tokenscope-companion@0.2.5` (preferred for a persistent
+   `npx tokenscope-companion@0.2.6 login` or install it once with
+   `npm install -g tokenscope-companion@0.2.6` (preferred for a persistent
    publisher and for `setup-claude`).
 2. Complete the official ChatGPT sign-in in your browser.
 3. Start a publisher. The managed route needs no setup:
@@ -68,6 +68,22 @@ quotas.
   refresh is delayed. iOS decides when background refresh runs.
 - Fix: start the companion, confirm it prints an encrypted snapshot, then pull
   to refresh in TokenScope.
+
+## Companion says "Publisher lock"
+
+- The lock stops two publishers from writing to the same private directory. The
+  message names the lock path and the owning process ID.
+- Stop the other publisher, or confirm and end that process. On Windows,
+  `Get-Process -Id <pid>` in PowerShell shows whether it is still running.
+- Companion 0.2.6 and later remove a lock automatically when its owner has
+  exited, including an empty lock left by a crash. On an older version, update
+  first (`npx tokenscope-companion@0.2.6 …`); delete `publisher.lock` manually
+  only after confirming the reported process is gone.
+- Default directories: `~/.tokenscope` for Codex and `~/.tokenscope-claude` for
+  Claude (`%USERPROFILE%\.tokenscope` and `%USERPROFILE%\.tokenscope-claude` on
+  Windows).
+- Never delete a lock while its publisher is running; both processes could
+  corrupt the private pairing state.
 
 ## Connections and privacy
 
